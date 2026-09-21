@@ -152,6 +152,7 @@ img { display: block; max-width: 100%; }
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px;
 }
 .chart {
+  min-width: 0;
   background: var(--paper);
   border-radius: 3px;
   box-shadow: 0 1px 0 #cfd4d5, 0 14px 30px -18px rgba(15,42,56,.5);
@@ -260,3 +261,17 @@ img { display: block; max-width: 100%; }
   .moment::before { left: 0; top: 34px; }
   .quote:nth-child(n) { grid-column: span 12; transform: none; }
 }
+
+/* ---------- Música ---------- */
+.music {
+  position: fixed; left: 16px; bottom: 16px; z-index: 60;
+  display: flex; gap: 8px; align-items: center;
+  font-family: var(--font-type); font-size: 14px; line-height: 1;
+  color: #b3c4cd; background: var(--steel);
+  border: 1px solid #4f7d90; border-radius: 3px; padding: 8px 12px; cursor: pointer;
+  box-shadow: 0 6px 16px -8px rgba(15,42,56,.6);
+}
+.music i { width: 8px; height: 8px; border-radius: 50%; background: #6f8a97; }
+.music.on { color: #fff; }
+.music.on i { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+@media (max-width: 600px) { .music { left: auto; right: 12px; bottom: 12px; font-size: 12px; padding: 6px 10px; } }

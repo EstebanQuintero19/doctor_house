@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Music from "./Music";
 
 const cast = [
   { id: "house", name: "Gregory House", role: "Jefe de Diagnóstico", field: "Nefrología, enf. infecciosas", since: "T1 – T8", note: "Cojera, Vicodin, genio. Todo lo demás es ruido." },
@@ -42,6 +43,7 @@ export default function Page() {
   const [house, ...team] = cast;
   return (
     <>
+      <Music src="/So much to say - Huddy - nomeutentelibero.mp3" title="So Much to Say" />
       <header className="banner">
         <div className="wrap">
           <nav className="nav" aria-label="Secciones">
