@@ -1,10 +1,6 @@
 services:
   - type: web
     name: doctor-house
-    runtime: node
-    plan: free
+    runtime: static
     buildCommand: npm ci && npm run build
-    startCommand: npm start
-    envVars:
-      - key: NODE_VERSION
-        value: "22"
+    staticPublishPath: out
