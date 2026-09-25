@@ -1,4 +1,9 @@
 import Image from "next/image";
+import { Count, Differential, Pinned, Timeline } from "./Motion";
+
+// Un latido: línea base, onda P, complejo QRS y onda T. Se repite a lo ancho del monitor.
+const beat = "l40 0 l6 -6 l6 6 l10 0 l4 8 l6 -62 l6 74 l5 -20 l12 0 l8 -12 l10 12 l37 0";
+const ekg = "M0 70 " + Array(8).fill(beat).join(" ");
 import Music from "./Music";
 
 const cast = [
@@ -45,6 +50,11 @@ export default function Page() {
     <>
       <Music src="/So much to say - Huddy - nomeutentelibero.mp3" title="So Much to Say" />
       <header className="banner">
+        <svg className="ekg" viewBox="0 0 1200 100" preserveAspectRatio="none" aria-hidden>
+          <path d={ekg} className="ekg-base" />
+          <path d={ekg} className="ekg-live" pathLength={1} />
+        </svg>
+        <p className="bpm" aria-hidden><i />72 lpm</p>
         <div className="wrap">
           <nav className="nav" aria-label="Secciones">
             <a href="#personajes">Personajes</a>
@@ -90,12 +100,14 @@ export default function Page() {
             Ocho temporadas siguiendo a un médico que odia a los pacientes y adora los rompecabezas. Cada semana un caso imposible, una pizarra llena de síntomas tachados y un diagnóstico que casi siempre llega en el último acto, y casi nunca es lupus.
           </p>
           <div className="facts">
-            <div><b>8</b><span>temporadas</span></div>
-            <div><b>177</b><span>episodios</span></div>
-            <div><b>2004–12</b><span>años de emisión</span></div>
+            <div><Count value="8" /><span>temporadas</span></div>
+            <div><Count value="177" /><span>episodios</span></div>
+            <div><Count value="2004–12" /><span>años de emisión</span></div>
           </div>
         </div>
       </section>
+
+      <Differential />
 
       <section id="personajes" className="section wrap" aria-labelledby="h-personajes">
         <div className="section-head">
@@ -104,7 +116,7 @@ export default function Page() {
         </div>
         <div className="charts">
           <Chart c={house} lead />
-          {team.map((c) => <Chart key={c.id} c={c} />)}
+          {team.map((c, i) => <Chart key={c.id} c={c} i={i + 1} />)}
         </div>
       </section>
 
@@ -114,7 +126,7 @@ export default function Page() {
             <h2 id="h-momentos" className="marker">Momentos que cambiaron el caso</h2>
             <p>Nueve episodios en orden. Después de cada uno, la serie ya no es la misma.</p>
           </div>
-          <ol className="timeline">
+          <Timeline>
             {moments.map((m) => (
               <li key={m.title} className="moment">
                 <div className="ep">{m.ep}<small>{m.year}</small></div>
@@ -124,23 +136,32 @@ export default function Page() {
                 </div>
               </li>
             ))}
-          </ol>
+          </Timeline>
         </div>
       </section>
 
-      <section id="frases" className="section wrap" aria-labelledby="h-frases">
+      <section id="frases" className="section wrap frases" aria-labelledby="h-frases">
         <div className="section-head">
           <h2 id="h-frases" className="marker">Lo que dejó escrito</h2>
         </div>
-        <ul className="quotes">
-          {quotes.map((x) => (
-            <li key={x.q} className="quote marker">
-              <span>{x.q}</span>
-              <cite>{x.who}</cite>
-            </li>
-          ))}
-        </ul>
       </section>
+      <div className="marquees" aria-label="Frases">
+        {[quotes.slice(0, 6), quotes.slice(6)].map((row, r) => (
+          <div key={r} className={r ? "marquee reverse" : "marquee"}>
+            {/* la fila va dos veces para que el bucle no tenga costura; la copia no se lee */}
+            {[0, 1].map((copy) => (
+              <ul key={copy} className="quotes" aria-hidden={copy === 1 || undefined}>
+                {row.map((x) => (
+                  <li key={x.q} className="quote marker">
+                    <span>{x.q}</span>
+                    <cite>{x.who}</cite>
+                  </li>
+                ))}
+              </ul>
+            ))}
+          </div>
+        ))}
+      </div>
 
       <section className="closing wrap" aria-label="Cierre">
         <p className="board board-small marker">Caso cerrado.</p>
@@ -151,9 +172,9 @@ export default function Page() {
   );
 }
 
-function Chart({ c, lead = false }: { c: (typeof cast)[number]; lead?: boolean }) {
+function Chart({ c, lead = false, i = 0 }: { c: (typeof cast)[number]; lead?: boolean; i?: number }) {
   return (
-    <article className={lead ? "chart lead" : "chart"}>
+    <Pinned className={lead ? "chart lead" : "chart"} i={i}>
       <div className="photo">
         <Image src={`/personajes/${c.id}.jpg`} alt={c.name} width={480} height={600} sizes={lead ? "(max-width: 600px) 100vw, 400px" : "(max-width: 600px) 100vw, 320px"} priority={lead} />
       </div>
@@ -166,6 +187,6 @@ function Chart({ c, lead = false }: { c: (typeof cast)[number]; lead?: boolean }
         </dl>
         <p className="note marker">{c.note}</p>
       </div>
-    </article>
+    </Pinned>
   );
 }
